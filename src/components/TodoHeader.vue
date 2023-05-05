@@ -1,3 +1,7 @@
+<script setup lang="ts">
+import { RouterLink } from 'vue-router';
+</script>
+
 <template>
    <header>
       <nav class="container">
@@ -12,10 +16,6 @@
       </nav>
    </header>
 </template>
-
-<script setup lang="ts">
-import { RouterLink } from 'vue-router';
-</script>
 
 <style lang="scss" scoped>
 
