@@ -1,22 +1,39 @@
-<template>
-   <div class="input-wrap">
-      <input type="text" v-model="todo" />
-      <button @click="storeTodo()" >Create</button>
-   </div>
-</template>
-
 <script setup lang="ts">
-import { ref, type Ref } from 'vue';
 
-const todo: Ref<string> = ref('');
+import { reactive } from 'vue';
+import TodoButton from './TodoButton.vue';
+
+const todoState = reactive({
+   todo: "",
+   invalid: false,
+   errMsg: "",
+});
 
 const emit = defineEmits(['create-todo']);
 
 const storeTodo = () => {
-   emit('create-todo', todo.value)
+   if (todoState.todo.length > 0) {
+      emit('create-todo', todoState.todo)
+      todoState.invalid = false
+      todoState.todo = ""
+      return
+   }
+   todoState.invalid = true
+   todoState.errMsg = "ToDo value can not be empty"
 }
 
 </script>
+
+<template>
+   <div class="input-wrap" :class="{ 'input-err': todoState.invalid }">
+      <input type="text" v-model="todoState.todo" />
+      <TodoButton @click="storeTodo()">
+         Create
+      </TodoButton>
+   </div>
+   <!-- v-show renders this label with display set to none, so it is better to use if you will toggle a lot the tag -->
+   <p v-show="todoState.invalid" class="err-msg">{{ todoState.errMsg }}</p>
+</template>
 
 <style lang="scss" scoped>
    .input-wrap {
@@ -29,6 +46,10 @@ const storeTodo = () => {
             0 -2px 4px -2px rgb(0 0 0 / 0.1);
       }
 
+      &.input-err {
+         border-color: red;
+      }
+
       input {
          width: 100%;
          padding: 8px 6px;
@@ -38,10 +59,12 @@ const storeTodo = () => {
             outline: none;
          }
       }
+   }
 
-      button {
-         padding: 8px 16px;
-         border: none;
-      }
+   .err-msg {
+      margin-top: 6px;
+      font-size: 12px;
+      text-align: center;
+      color: red;
    }
 </style>
